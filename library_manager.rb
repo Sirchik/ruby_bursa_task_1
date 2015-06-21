@@ -1,3 +1,5 @@
+require 'active_support/all'
+require 'date'
 class LibraryManager
 
   # 1. Бибилиотека в один момент решила ввести жесткую систему штрафов (прямо как на rubybursa :D).
@@ -13,9 +15,13 @@ class LibraryManager
   # - пеня в центах
   def penalty price, issue_datetime
     # решение пишем тут
-
-
-
+    hoursAgo = ((DateTime.now.new_offset(0) - issue_datetime).to_f * 24).round
+    res = if hoursAgo > 0
+      price * 0.1 / 100 * hoursAgo
+    else
+      0
+    end
+    return res.round
   end
 
   # 2. Известны годы жизни двух писателей. Год рождения, год смерти. Посчитать, могли ли они чисто 
@@ -32,9 +38,17 @@ class LibraryManager
   # - true или false
   def could_meet_each_other? year_of_birth_first, year_of_death_first, year_of_birth_second, year_of_death_second
     # решение пишем тут
-
-
-
+    if year_of_birth_first > year_of_death_first || year_of_birth_second > year_of_death_second
+      puts "Wrong dates!"
+      return false
+    end
+    res = if (year_of_birth_first <= year_of_birth_second && year_of_death_first >= year_of_birth_second) ||
+      (year_of_birth_second <= year_of_birth_first && year_of_death_second >= year_of_birth_first)
+      true
+    else
+      false
+    end
+    return res
   end
 
   # 3. Исходя из жесткой системы штрафов за опоздания со cдачей книг, читатели начали задумываться - а 
@@ -47,10 +61,8 @@ class LibraryManager
   # - число полных дней, нак которые необходимо опоздать со здачей, чтобы пеня была равна стоимости книги.
   def days_to_buy price
     # решение пишем тут
-
-
-
-
+    res = 100 / 0.1 / 24
+    return res.round
   end
 
 
@@ -64,9 +76,15 @@ class LibraryManager
   # - имя и фамилия автора транслитом. ("Ivan Franko")
   def author_translit ukr_name
     # решение пишем тут
-
-
-
+    ukrArray = Array.[]("А", "Б", "В", "Г", "Ґ", "Д", "Е", "Є", "Ж", "З", "И", "І", "Ї", "Й", "К", "Л", "М", "Н",
+    "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ю", "Я", "а", "б", "в", "г", "ґ", "д", "е", "є", "ж", "з", "и", "і", "ї", "й", "к", "л", "м", "н",
+    "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ю", "я")
+    translitArray = Array.[]("A", "B", "V", "H", "G", "D", "E", "Ye", "Zh", "Z", "Y", "I", "Yi", "Y", "K", "L", "M", "N",
+    "O", "P", "R", "S", "T", "U", "F", "Kh", "Ts", "Ch", "Sh", "Shch", "Yu", "Ya", "a", "b", "v", "h", "g", "d", "e", "ie", "zh", "z", "y", "i", "i", "i", "k", "l", "m", "n",
+    "o", "p", "r", "s", "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "iu", "ia")
+    res = ""
+    ukr_name.each_char {|c| res = res + (ukrArray.index(c) == nil ? c : translitArray[ukrArray.index(c)])}
+    return res
   end
 
   #5. Читатели любят дочитывать книги во что-бы то ни стало. Необходимо помочь им просчитать сумму штрафа, 
@@ -83,8 +101,10 @@ class LibraryManager
   # - Пеня в центах или 0 при условии что читатель укладывается в срок здачи.
   def penalty_to_finish price, issue_datetime, pages_quantity, current_page, reading_speed
     # решение пишем тут
-
-
+    hoursToFinish = (pages_quantity - current_page) * reading_speed
+    dtFinish = DateTime.now.new_offset(0) + hoursToFinish.hours
+    res = penalty(price, dtFinish)
+    return res
   end
 
 end
