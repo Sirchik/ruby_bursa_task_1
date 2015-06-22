@@ -100,10 +100,10 @@ class LibraryManager
   # - Пеня в центах или 0 при условии что читатель укладывается в срок здачи.
   def penalty_to_finish price, issue_datetime, pages_quantity, current_page, reading_speed
     # решение пишем тут
-    hoursToFinish = (pages_quantity - current_page) * reading_speed
+    hoursToFinish = (pages_quantity - current_page) / reading_speed
     dtFinish = DateTime.now.new_offset(0) + hoursToFinish.hours
-    res = penalty(price, dtFinish)
-    return res
+    res = dtFinish > issue_datetime ? price * 0.1 / 100 * ((dtFinish - issue_datetime).to_f * 24).round : 0
+    return res.round
   end
 
 end
