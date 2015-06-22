@@ -1,5 +1,4 @@
 require 'active_support/all'
-require 'date'
 class LibraryManager
 
   # 1. Бибилиотека в один момент решила ввести жесткую систему штрафов (прямо как на rubybursa :D).
